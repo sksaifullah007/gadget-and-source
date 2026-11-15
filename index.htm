@@ -10,3 +10,148 @@
   <p>Your trusted gadget store.</p>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gadget & Source</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#080e1b;color:white}
+header{background:#101b30;padding:18px 6%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.logo{font-size:21px;font-weight:bold;color:#42a5ff}
+nav a{color:white;text-decoration:none;margin-left:12px;font-size:13px}
+.hero{padding:65px 7%;background:linear-gradient(120deg,#10264a,#080e1b)}
+.hero h1{font-size:38px;line-height:1.2;margin-bottom:16px}
+.hero h1 span{color:#38a5ff}
+.hero p{color:#bdcce0;line-height:1.7;margin-bottom:24px}
+.btn{background:#168cff;color:white;padding:13px 22px;border:0;border-radius:7px;text-decoration:none;display:inline-block;cursor:pointer}
+.search{display:block;width:88%;margin:25px auto;padding:15px;border-radius:8px;border:1px solid #29446b;background:#111e33;color:white;font-size:15px}
+h2{margin:28px 6% 18px}
+.categories{display:flex;gap:10px;margin:20px 6%;flex-wrap:wrap}
+.category{padding:11px 17px;background:#142541;border-radius:7px;color:#80c5ff;cursor:pointer;border:1px solid #28436a}
+.category.active{background:#168cff;color:white}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:20px 6%}
+.product{background:#121e32;border:1px solid #263d5e;padding:13px;border-radius:10px}
+.product-image{height:125px;background:#e9f2ff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:65px}
+.product h3{font-size:15px;margin:12px 0}
+.price{color:#46adff;font-size:17px;font-weight:bold;margin-bottom:12px}
+.product button{width:100%;padding:10px;background:#168cff;color:white;border:0;border-radius:6px;cursor:pointer}
+.product button:hover,.btn:hover{background:#0873d2}
+#cart{margin:25px 6%;padding:20px;background:#121e32;border-radius:10px}
+#cartItems{line-height:2;color:#d2e5ff}
+footer{text-align:center;background:#101b30;padding:30px;color:#a9bdd8;margin-top:35px;line-height:2}
+footer strong{color:#42a5ff}
+@media(min-width:700px){
+.products{grid-template-columns:repeat(4,1fr)}
+.hero h1{font-size:55px}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">GADGET & SOURCE</div>
+<nav>
+<a href="#">Home</a>
+<a href="#products">Products</a>
+<a href="#contact">Contact</a>
+<a href="#cart">🛒 Cart (<span id="count">0</span>)</a>
+</nav>
+</header>
+
+<section class="hero">
+<h1>Discover The <span>Future</span><br>Of Technology.</h1>
+<p>Your trusted destination for premium gadgets, smartphones and accessories.</p>
+<a href="#products" class="btn">Explore Products →</a>
+</section>
+
+<input class="search" id="search" placeholder="🔍 Search your favorite gadgets..." oninput="showProducts()">
+
+<h2>Shop By Category</h2>
+<div class="categories">
+<button class="category active" onclick="filter('All',this)">All</button>
+<button class="category" onclick="filter('Phones',this)">Phones</button>
+<button class="category" onclick="filter('Laptops',this)">Laptops</button>
+<button class="category" onclick="filter('Accessories',this)">Accessories</button>
+</div>
+
+<h2 id="products">Featured Products</h2>
+<div class="products" id="productList"></div>
+
+<section id="cart">
+<h2 style="margin:0 0 15px">🛒 Your Shopping Cart</h2>
+<div id="cartItems">Your cart is empty.</div>
+<h3 style="margin-top:15px">Total: ৳<span id="total">0</span></h3>
+</section>
+
+<footer id="contact">
+<strong>GADGET & SOURCE</strong>
+<p>Your Trusted Tech Store</p>
+<p>Smartphones | Laptops | Accessories</p>
+<p>© 2026 Gadget & Source. All Rights Reserved.</p>
+</footer>
+
+<script>
+const products=[
+{name:"Premium Smartphone",price:25000,icon:"📱",category:"Phones"},
+{name:"Smart Laptop",price:65000,icon:"💻",category:"Laptops"},
+{name:"Wireless Headphones",price:3500,icon:"🎧",category:"Accessories"},
+{name:"Smart Watch",price:4500,icon:"⌚",category:"Accessories"},
+{name:"Gaming Mouse",price:1800,icon:"🖱️",category:"Accessories"},
+{name:"Tablet",price:22000,icon:"📲",category:"Phones"},
+{name:"Bluetooth Speaker",price:2800,icon:"🔊",category:"Accessories"},
+{name:"MacBook",price:95000,icon:"💻",category:"Laptops"}
+];
+
+let selected="All";
+let cart=[];
+
+function showProducts(){
+const search=document.getElementById("search").value.toLowerCase();
+const list=document.getElementById("productList");
+list.innerHTML="";
+products.forEach((p,i)=>{
+if((selected==="All"||p.category===selected)&&p.name.toLowerCase().includes(search)){
+list.innerHTML+=`
+<div class="product">
+<div class="product-image">${p.icon}</div>
+<h3>${p.name}</h3>
+<div class="price">৳${p.price.toLocaleString("en-BD")}</div>
+<button onclick="addCart(${i})">Add to Cart +</button>
+</div>`;
+}
+});
+if(!list.innerHTML)list.innerHTML="<p>No products found.</p>";
+}
+
+function filter(category,button){
+selected=category;
+document.querySelectorAll(".category").forEach(b=>b.classList.remove("active"));
+button.classList.add("active");
+showProducts();
+}
+
+function addCart(i){
+cart.push(products[i]);
+updateCart();
+}
+
+function updateCart(){
+document.getElementById("count").textContent=cart.length;
+document.getElementById("cartItems").innerHTML=cart.length?
+cart.map((p,i)=>`${p.name} — ৳${p.price.toLocaleString("en-BD")} <button onclick="removeCart(${i})">Remove</button>`).join("<br>"):
+"Your cart is empty.";
+document.getElementById("total").textContent=cart.reduce((sum,p)=>sum+p.price,0).toLocaleString("en-BD");
+}
+
+function removeCart(i){
+cart.splice(i,1);
+updateCart();
+}
+
+showProducts();
+</script>
+</body>
+</html>
